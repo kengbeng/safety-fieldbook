@@ -105,3 +105,11 @@ input,textarea,select{min-width:0;max-width:100%}
 .voice-note{background:#f4f7ef;border:1px solid var(--line);padding:16px;border-radius:8px;margin-top:12px;min-width:0}
 .voice-note strong{overflow-wrap:anywhere}
 .voice-transcript{white-space:pre-wrap;overflow-wrap:anywhere;color:#52644d;font-size:14px}
+
+.speech-panel{padding:16px;border:1px solid #cbd5df;border-radius:12px;margin:16px 0}.speech-panel input[type=checkbox]{width:auto;min-height:24px}.speech-panel .actions{flex-wrap:wrap}
+/* Safari date controls otherwise retain an intrinsic width wider than the grid track. */
+#inspectionForm input[type=date]{display:block;-webkit-appearance:none;appearance:none;box-sizing:border-box;width:0;min-width:100%;max-width:100%;min-inline-size:100%;padding-inline:11px;text-align:left}
+#inspectionForm input[type=date]::-webkit-date-and-time-value{min-width:0;text-align:left}
+
+.header-status{display:flex;align-items:center;gap:22px;min-width:0}.header-status .pwa-panel{border:0;border-left:1px solid var(--line);border-radius:0;background:transparent;padding:0 0 0 18px;margin:0;gap:10px;font-size:11px}.shell>#installHelp{padding:14px 24px;background:#eef3e7;margin:0;width:auto}.header-status #saveStatus{max-width:none}.header-status #offlineStatus{color:#365e43}
+@media(max-width:700px){.shell>header{height:auto;min-height:85px;padding:12px 18px;flex-wrap:wrap;gap:10px}.header-status{width:100%;gap:10px;justify-content:space-between;align-items:flex-start}.header-status #saveStatus{flex:1;max-width:52%;text-align:left;line-height:1.5}.header-status .pwa-panel{flex:1;padding-left:10px;font-size:10px;justify-content:flex-end;text-align:right}.header-status .pwa-panel>div:first-child{gap:3px}.header-status #networkStatus{font-size:9px}.header-status .pwa-actions:empty{display:none}}

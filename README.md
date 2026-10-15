@@ -67,10 +67,18 @@ Run `node test-export.mjs`, `node test-storage.mjs` and `node test-sw.mjs`. Expo
 
 ## Local voice notes
 
-Use **Voice note** on a finding to record (microphone permission and a supported HTTPS browser required), or attach an existing audio file. Stop to review playback, enter or edit transcript text, and save the note. Recordings stop after five minutes or when the app becomes hidden. Audio is stored in IndexedDB with its finding, and remains available offline once the app is cached. Transcripts are manual: type or paste text and verify safety details. No automatic transcription service is connected and audio is not transmitted for transcription.
+Use **Voice note** on a finding to record (microphone permission and a supported HTTPS browser required), or attach an existing audio file. Stop to review playback, enter or edit transcript text, and save the note. Recordings stop after five minutes or when the app becomes hidden. Audio is stored in IndexedDB with its finding, and remains available offline once the app is cached. Transcripts can be generated on-device after optional speech-model setup, or typed manually. Verify safety details against the audio. No audio is transmitted for transcription.
 
 Every ZIP profile retains audio bytes unchanged. Finding folders include A01_title.webm/m4a/etc. and A01_title_transcript.txt; audio.csv and JSON link them to their finding, and the offline HTML report offers playback and transcript text. Supported playback formats vary by browser. Imported uncompressed audio may be large; photo compression modes do not compress audio. Deleting a finding/inspection or clearing local records also removes its audio and transcripts.
 
 `node test-voice.mjs` checks recorder lifecycle with a synthetic media source, microphone denial/cancellation, track cleanup and audio exports. A real microphone session on the target phone remains an acceptance test.
 
 Mobile inspection forms stack Date and Inspector vertically, constrain native control widths and use zero-minimum grid columns to prevent overlap.
+
+## On-device English transcription
+
+Open a voice note and choose **Set up on-device transcription** while online. This explicitly downloads the pinned Transformers.js 3.8.1 runtime and quantized Xenova/whisper-tiny.en model (revision 79fb389fc764e7c395bd330e9531d9d32ada7049) from Hugging Face. Expect about 65 MB and additional working memory. After successful setup these assets are cached for offline use in this browser. Browser eviction or clearing site data requires setup again.
+
+New recordings and attached audio are automatically transcribed when enabled. Existing notes have a Transcribe audio button. Audio is decoded and processed in a local worker using WASM; no recording is uploaded. Model downloads disclose normal network request information to their hosts. English only; five-minute limit. Slow or memory-limited phones may fail: saved audio and manual transcript editing remain available. Always verify names, locations, numbers and safety details against audio. Edits made during inference are preserved with an option to append generated text. Saving or closing the dialog cancels unfinished inference.
+
+Storage & export can remove the optional model without deleting inspections. Exports include unchanged audio, editable transcript text and transcript source/model metadata; the model itself is not exported. See bundled third-party licenses.
