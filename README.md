@@ -81,3 +81,7 @@ Findings use compact summaries showing location, priority, photo/audio counts an
 ## Design and credits
 
 The interface, checklist app icon and exported HTML report use NUS corporate blue (#003D7C) and orange (#EF7C00), based on https://www.nus.edu.sg/identity/guidelines/corporate-colours. The checklist icon is an app-specific symbol; its editable vector source is icon.svg. Footer credit: NUS ORMC · KB Goh, with inputs from WY Wong.
+
+## Offline help
+
+Select Help in the app navigation for a searchable, offline-ready guide. Topics cover quick start, findings, photos and annotations, voice input, local saving, export options and ZIP organisation, deletion/storage, installation, troubleshooting and planned cloud connections. Context links beside description dictation, annotation controls and export options open the relevant topic in a separate tab so unfinished forms stay open. The guide and its search script are included in the service-worker shell cache.

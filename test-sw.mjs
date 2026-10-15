@@ -29,7 +29,7 @@ vm.runInContext(source, context);
 async function lifecycle(type) {let task;listeners[type]({waitUntil:p=>task=p});return task;}
 await lifecycle('install');
 const activeName=[...cachesByName.keys()][0];
-assert.equal(cachesByName.get(activeName).size,13);
+assert.equal(cachesByName.get(activeName).size,15);
 for (const url of cachesByName.get(activeName).keys()) {
  assert.ok(url.startsWith(scope));
  const relative=url.slice(scope.length);
@@ -55,6 +55,8 @@ function request(path,mode='cors',method='GET') {
 assert.equal((await request('./','navigate')).cached,scope+'index.html');
 assert.equal((await request('index.html?opened=home','navigate')).cached,scope+'index.html');
 assert.equal((await request('app.js')).cached,scope+'app.js');
+assert.equal((await request('help.html','navigate')).cached,scope+'help.html');
+assert.equal((await request('help.js')).cached,scope+'help.js');
 assert.equal(request('../another-app/','navigate'),undefined);
 assert.equal(request('private-report.json'),undefined);
 assert.equal(request('app.js','cors','POST'),undefined);
