@@ -1,10 +1,10 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v11-offline-help-2';
+const VERSION = 'v12-photo-first-4';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
 const SHELL = ['index.html', 'style.css', 'app.js', 'storage.js', 'export.js',
-  'help.html', 'help.js', 'pwa.js', 'voice.js', 'findings.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
+  'help.html', 'help.js', 'photo-entry.js', 'pwa.js', 'voice.js', 'findings.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'icon-maskable-512.png', 'apple-touch-icon.png'];
 const SHELL_URLS = SHELL.map(path => new URL(path, SCOPE).href);
 self.addEventListener('install', event => {

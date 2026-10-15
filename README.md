@@ -85,3 +85,7 @@ The interface, checklist app icon and exported HTML report use NUS corporate blu
 ## Offline help
 
 Select Help in the app navigation for a searchable, offline-ready guide. Topics cover quick start, findings, photos and annotations, voice input, local saving, export options and ZIP organisation, deletion/storage, installation, troubleshooting and planned cloud connections. Context links beside description dictation, annotation controls and export options open the relevant topic in a separate tab so unfinished forms stay open. The guide and its search script are included in the service-worker shell cache.
+
+## Photo-first findings
+
+From an inspection, Take photo / Add images starts a finding with captured evidence; Add finding retains the details-first route. Only readable images create a record. Each original is saved locally before the next image is processed. New photo-first records inherit only building/floor from the previous finding and start without a description or room. Details open with photo previews. Finish later saves entered partial details; closing keeps saved photos and discards unsaved form edits. Discard finding requires confirmation. Incomplete records remain searchable, cannot be marked reviewed, and are labelled in HTML/CSV/JSON exports. Import errors and failed local saves keep clear status and never claim successful saving.
