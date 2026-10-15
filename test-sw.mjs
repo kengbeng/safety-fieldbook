@@ -29,7 +29,7 @@ vm.runInContext(source, context);
 async function lifecycle(type) {let task;listeners[type]({waitUntil:p=>task=p});return task;}
 await lifecycle('install');
 const activeName=[...cachesByName.keys()][0];
-assert.equal(cachesByName.get(activeName).size,16);
+assert.equal(cachesByName.get(activeName).size,13);
 for (const url of cachesByName.get(activeName).keys()) {
  assert.ok(url.startsWith(scope));
  const relative=url.slice(scope.length);
@@ -38,9 +38,15 @@ for (const url of cachesByName.get(activeName).keys()) {
 cachesByName.set('safety-fieldbook:/safety-fieldbook/:old',new Map());
 cachesByName.set('safety-fieldbook:/another-app/:v1',new Map());
 cachesByName.set('unrelated-cache',new Map());
+cachesByName.set('fieldbook-local-asr:/safety-fieldbook/:v1',new Map());
+cachesByName.set('fieldbook-local-asr:/another-app/:v1',new Map());
 await lifecycle('activate');
+assert.ok(!cachesByName.has('fieldbook-local-asr:/safety-fieldbook/:v1'));
+assert.ok(cachesByName.has('fieldbook-local-asr:/another-app/:v1'));
+assert.ok(!source.includes('transformers.min.js'));
+
 assert.ok(claimed);
-assert.deepEqual(deleted,['safety-fieldbook:/safety-fieldbook/:old']);
+assert.deepEqual(deleted,['safety-fieldbook:/safety-fieldbook/:old','fieldbook-local-asr:/safety-fieldbook/:v1']);
 function request(path,mode='cors',method='GET') {
  let response;
  listeners.fetch({request:{url:new URL(path,scope).href,mode,method},respondWith:p=>response=p});

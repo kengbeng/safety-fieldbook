@@ -1,10 +1,10 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v7-compact-findings-2';
+const VERSION = 'v8-voice-notes-no-model-1';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
 const SHELL = ['index.html', 'style.css', 'app.js', 'storage.js', 'export.js',
-  'pwa.js', 'voice.js', 'findings.js', 'speech.js', 'speech-cache.js', 'speech-worker.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
+  'pwa.js', 'voice.js', 'findings.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'icon-maskable-512.png', 'apple-touch-icon.png'];
 const SHELL_URLS = SHELL.map(path => new URL(path, SCOPE).href);
 self.addEventListener('install', event => {
@@ -16,7 +16,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+    await Promise.all(keys.filter(key => (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) || key.startsWith(`fieldbook-local-asr:${new URL(SCOPE).pathname}:`))
       .map(key => caches.delete(key)));
     await self.clients.claim();
     const clients = await self.clients.matchAll({type: 'window'});
@@ -30,12 +30,6 @@ self.addEventListener('fetch', event => {
   const {request} = event;
   const url = new URL(request.url);
   if (request.method !== 'GET' || !url.href.startsWith(SCOPE)) return;
-  const speechRuntime = ['transformers.min.js','ort-wasm-simd-threaded.jsep.mjs','ort-wasm-simd-threaded.jsep.wasm'].map(path=>new URL(path,SCOPE).href);
-  if(speechRuntime.includes(url.href)){
-    event.respondWith(caches.open(`fieldbook-local-asr:${new URL(SCOPE).pathname}:v1`).then(async cache=>(await cache.match(request))||fetch(request)));
-    return;
-  }
-
   const isAppNavigation = request.mode === 'navigate' &&
     (url.pathname === new URL(SCOPE).pathname ||
      url.pathname === new URL('index.html', SCOPE).pathname);

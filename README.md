@@ -67,7 +67,7 @@ Run `node test-export.mjs`, `node test-storage.mjs` and `node test-sw.mjs`. Expo
 
 ## Local voice notes
 
-Use **Voice note** on a finding to record (microphone permission and a supported HTTPS browser required), or attach an existing audio file. Stop to review playback, enter or edit transcript text, and save the note. Recordings stop after five minutes or when the app becomes hidden. Audio is stored in IndexedDB with its finding, and remains available offline once the app is cached. Transcripts can be generated on-device after optional speech-model setup, or typed manually. Verify safety details against the audio. No audio is transmitted for transcription.
+Use **Voice note** on a finding to record (microphone permission and a supported HTTPS browser required), or attach an existing audio file. Stop to review playback, enter or edit transcript text, and save the note. Recordings stop after five minutes or when the app becomes hidden. Audio is stored in IndexedDB with its finding, and remains available offline once the app is cached. Optional transcript text can be typed, pasted or entered using device keyboard dictation. Verify safety details against the audio. No audio is transmitted for transcription.
 
 Every ZIP profile retains audio bytes unchanged. Finding folders include A01_title.webm/m4a/etc. and A01_title_transcript.txt; audio.csv and JSON link them to their finding, and the offline HTML report offers playback and transcript text. Supported playback formats vary by browser. Imported uncompressed audio may be large; photo compression modes do not compress audio. Deleting a finding/inspection or clearing local records also removes its audio and transcripts.
 
@@ -75,16 +75,13 @@ Every ZIP profile retains audio bytes unchanged. Finding folders include A01_tit
 
 Mobile inspection forms stack Date and Inspector vertically, constrain native control widths and use zero-minimum grid columns to prevent overlap.
 
-## On-device English transcription
+## Transcript text and device dictation
 
-Open a voice note and choose **Set up on-device transcription** while online. This explicitly downloads the pinned Transformers.js 3.8.1 runtime and quantized Xenova/whisper-tiny.en model (revision 79fb389fc764e7c395bd330e9531d9d32ada7049) from Hugging Face. Expect about 65 MB and additional working memory. After successful setup these assets are cached for offline use in this browser. Browser eviction or clearing site data requires setup again.
+The app records and saves voice notes, but does not run a speech model or automatically transcribe recordings. Type or paste optional transcript text, or tap the transcript field and use the phone keyboard's microphone. Use on-device dictation where the device/language supports it; availability, language downloads and local/online processing are controlled by device settings. Stop recording before dictating. Keyboard dictation is live text entry, not transcription of the saved audio. Verify names, locations, numbers and safety details.
 
-New recordings and attached audio are automatically transcribed when enabled. Existing notes have a Transcribe audio button. Audio is decoded and processed in a local worker using WASM; no recording is uploaded. Model downloads disclose normal network request information to their hosts. English only; five-minute limit. Slow or memory-limited phones may fail: saved audio and manual transcript editing remain available. Always verify names, locations, numbers and safety details against audio. Edits made during inference are preserved with an option to append generated text. Saving or closing the dialog cancels unfinished inference.
-
-Storage & export can remove the optional model without deleting inspections. Exports include unchanged audio, editable transcript text and transcript source/model metadata; the model itself is not exported. See bundled third-party licenses.
+Existing saved audio and transcripts are retained, including historical transcript provenance in exports. On activation, the updated service worker removes only this app's former downloaded speech-model cache. Inspections, photos, audio notes and unrelated app caches are untouched. No speech-model download is offered or performed.
 
 ## Larger inspections
 
 Findings use compact summaries showing location, priority, photo/audio counts and review status. Open one finding at a time for details and editing. Search descriptions, locations, categories, priorities or review text; results show ten findings per page with stable inspection finding numbers. Adding a finding opens it on its page and clears the search. Search and pages affect only the view: exports always include all findings.
 
-Speech generation allows up to 256 tokens per 20-second segment to reduce possible cutoff in dense speech. This does not improve the underlying tiny English model's recognition accuracy.
