@@ -77,3 +77,7 @@ Existing saved audio and legacy transcript text are retained, including transcri
 
 Findings use compact summaries showing location, priority, photo/audio counts and review status. Open one finding at a time for details and editing. Search descriptions, locations, categories, priorities or review text; results show ten findings per page with stable inspection finding numbers. Adding a finding opens it on its page and clears the search. Search and pages affect only the view: exports always include all findings.
 
+
+## Design and credits
+
+The interface, checklist app icon and exported HTML report use NUS corporate blue (#003D7C) and orange (#EF7C00), based on https://www.nus.edu.sg/identity/guidelines/corporate-colours. The checklist icon is an app-specific symbol; its editable vector source is icon.svg. Footer credit: NUS ORMC · KB Goh, with inputs from WY Wong.
