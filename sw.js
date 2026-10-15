@@ -1,5 +1,5 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v2-offline-2';
+const VERSION = 'v3-interface-2';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
