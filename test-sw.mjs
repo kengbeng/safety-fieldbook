@@ -29,7 +29,7 @@ vm.runInContext(source, context);
 async function lifecycle(type) {let task;listeners[type]({waitUntil:p=>task=p});return task;}
 await lifecycle('install');
 const activeName=[...cachesByName.keys()][0];
-assert.equal(cachesByName.get(activeName).size,11);
+assert.equal(cachesByName.get(activeName).size,12);
 for (const url of cachesByName.get(activeName).keys()) {
  assert.ok(url.startsWith(scope));
  const relative=url.slice(scope.length);

@@ -1,10 +1,10 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v4-exports-2';
+const VERSION = 'v5-voice-form-2';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
 const SHELL = ['index.html', 'style.css', 'app.js', 'storage.js', 'export.js',
-  'pwa.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
+  'pwa.js', 'voice.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'icon-maskable-512.png', 'apple-touch-icon.png'];
 const SHELL_URLS = SHELL.map(path => new URL(path, SCOPE).href);
 self.addEventListener('install', event => {

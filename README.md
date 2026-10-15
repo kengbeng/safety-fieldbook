@@ -64,3 +64,13 @@ JPEG is lossy; inspect originals for fine detail. Transparent images use a white
 Compact sharing is not a complete archive. JSON keeps annotation objects but cannot recreate a pristine original from a flattened photo. ZIP restore/import is not implemented. Spreadsheet users should import room/floor/ID columns as text to preserve leading zeroes. Keep the extracted directory structure intact so report links work.
 
 Run `node test-export.mjs`, `node test-storage.mjs` and `node test-sw.mjs`. Export checks cover all profiles, exact originals, paths, CSV safety, report escaping, missing photos and errors. Storage-adapter tests cover transaction-confirmed deletion, scoped clearing and abort rejection. Browser checks cover real JPEG/PNG exports, file sizes, install placement, deletion guards and cancellation.
+
+## Local voice notes
+
+Use **Voice note** on a finding to record (microphone permission and a supported HTTPS browser required), or attach an existing audio file. Stop to review playback, enter or edit transcript text, and save the note. Recordings stop after five minutes or when the app becomes hidden. Audio is stored in IndexedDB with its finding, and remains available offline once the app is cached. Transcripts are manual: type or paste text and verify safety details. No automatic transcription service is connected and audio is not transmitted for transcription.
+
+Every ZIP profile retains audio bytes unchanged. Finding folders include A01_title.webm/m4a/etc. and A01_title_transcript.txt; audio.csv and JSON link them to their finding, and the offline HTML report offers playback and transcript text. Supported playback formats vary by browser. Imported uncompressed audio may be large; photo compression modes do not compress audio. Deleting a finding/inspection or clearing local records also removes its audio and transcripts.
+
+`node test-voice.mjs` checks recorder lifecycle with a synthetic media source, microphone denial/cancellation, track cleanup and audio exports. A real microphone session on the target phone remains an acceptance test.
+
+Mobile inspection forms stack Date and Inspector vertically, constrain native control widths and use zero-minimum grid columns to prevent overlap.

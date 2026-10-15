@@ -89,3 +89,19 @@ button:disabled{cursor:default}
  .export-option{padding:12px;gap:10px}
  .export-option strong{font-size:14px}
 }
+
+/* Native date controls must not impose their intrinsic width on a grid cell. */
+.form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.form-grid>label{min-width:0}
+input,textarea,select{min-width:0;max-width:100%}
+@media(max-width:700px){#inspectionForm .form-grid{grid-template-columns:minmax(0,1fr)}}
+
+.voice-record-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.audio-attachment{font-size:13px;margin:0;max-width:100%;gap:5px}
+.audio-attachment input{font-size:13px;padding:6px}
+#voicePlayback,.voice-note audio{width:100%;margin:12px 0;min-height:44px}
+#voiceStatus{font-size:13px;color:#365942}
+.voice-notes h4{margin:24px 0 12px;font-size:15px}
+.voice-note{background:#f4f7ef;border:1px solid var(--line);padding:16px;border-radius:8px;margin-top:12px;min-width:0}
+.voice-note strong{overflow-wrap:anywhere}
+.voice-transcript{white-space:pre-wrap;overflow-wrap:anywhere;color:#52644d;font-size:14px}
