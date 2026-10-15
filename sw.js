@@ -1,10 +1,10 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v6-local-transcription-3';
+const VERSION = 'v7-compact-findings-2';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
 const SHELL = ['index.html', 'style.css', 'app.js', 'storage.js', 'export.js',
-  'pwa.js', 'voice.js', 'speech.js', 'speech-cache.js', 'speech-worker.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
+  'pwa.js', 'voice.js', 'findings.js', 'speech.js', 'speech-cache.js', 'speech-worker.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
   'icon-maskable-512.png', 'apple-touch-icon.png'];
 const SHELL_URLS = SHELL.map(path => new URL(path, SCOPE).href);
 self.addEventListener('install', event => {

@@ -34,7 +34,7 @@ self.onmessage=async({data})=>{
     const transcribe=await load(id);
     if(type==='prepare'){self.postMessage({id,type:'result',result:true});return;}
     progress(id,'Transcribing locally… Keep this page open.');
-    const result=await transcribe(data.samples,{chunk_length_s:20,stride_length_s:3,return_timestamps:false,max_new_tokens:128,do_sample:false});
+    const result=await transcribe(data.samples,{chunk_length_s:20,stride_length_s:3,return_timestamps:false,max_new_tokens:256,do_sample:false});
     self.postMessage({id,type:'result',result:String(result.text||'').trim()});
   }catch(error){self.postMessage({id,type:'error',message:error.message||String(error)});}
 };

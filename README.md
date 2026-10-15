@@ -82,3 +82,9 @@ Open a voice note and choose **Set up on-device transcription** while online. Th
 New recordings and attached audio are automatically transcribed when enabled. Existing notes have a Transcribe audio button. Audio is decoded and processed in a local worker using WASM; no recording is uploaded. Model downloads disclose normal network request information to their hosts. English only; five-minute limit. Slow or memory-limited phones may fail: saved audio and manual transcript editing remain available. Always verify names, locations, numbers and safety details against audio. Edits made during inference are preserved with an option to append generated text. Saving or closing the dialog cancels unfinished inference.
 
 Storage & export can remove the optional model without deleting inspections. Exports include unchanged audio, editable transcript text and transcript source/model metadata; the model itself is not exported. See bundled third-party licenses.
+
+## Larger inspections
+
+Findings use compact summaries showing location, priority, photo/audio counts and review status. Open one finding at a time for details and editing. Search descriptions, locations, categories, priorities or review text; results show ten findings per page with stable inspection finding numbers. Adding a finding opens it on its page and clears the search. Search and pages affect only the view: exports always include all findings.
+
+Speech generation allows up to 256 tokens per 20-second segment to reduce possible cutoff in dense speech. This does not improve the underlying tiny English model's recognition accuracy.
