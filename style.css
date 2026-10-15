@@ -59,3 +59,33 @@ footer{color:#5d6d58;font-size:11px}
 }
 
 @media(max-width:700px){#findingForm .form-grid label:nth-child(n+3){grid-column:1/-1}}
+
+/* Installation stays in the top-right app chrome on desktop and phones. */
+.brand-row{display:block}
+.install-control{position:fixed;right:24px;top:17px;z-index:20;display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;font-size:13px;padding:10px 13px;background:#fff}
+header{padding-right:175px}
+header #saveStatus{margin-left:auto;max-width:55%}
+.export-options{padding:0;border:0;margin:20px 0}
+.export-options legend{font-size:14px;font-weight:600;margin-bottom:5px}
+.export-option{display:flex;flex-direction:row;align-items:flex-start;gap:12px;border:1px solid #cdd8c7;border-radius:8px;padding:15px;margin:10px 0;cursor:pointer;font-weight:400}
+.export-option:has(input:checked){background:#eef4e6;border-color:#6b8757}
+.export-option input{flex:0 0 22px;width:22px;height:22px;min-height:22px;margin:0;accent-color:#164b3d}
+.export-option strong{display:block;font-size:14px;line-height:1.4}
+.export-option small{display:block;color:#52644d;line-height:1.6;margin-top:5px;font-size:13px}
+#exportStatus,#deleteStatus{font-size:13px;color:#365942}
+.storage-cleanup{grid-column:1/-1}
+.danger-button{background:#963f32;border-color:#963f32;color:#fff}
+.danger-button:hover{background:#7d3329}
+.delete-inspection-row{border-top:1px solid var(--line);padding-top:20px;margin-top:24px;display:flex;justify-content:flex-end}
+button:disabled{cursor:default}
+@media(max-width:700px){
+ .brand-row{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+ .brand{font-size:17px;min-width:0;margin:0;gap:8px}
+ .brand-name{min-width:0}
+ .brand .mark{width:38px;height:38px;flex-basis:38px}
+ .install-control{position:static;flex:0 0 auto;font-size:12px;padding:9px 10px}
+ header{padding:10px 18px}
+ header #saveStatus{margin-left:0;max-width:100%}
+ .export-option{padding:12px;gap:10px}
+ .export-option strong{font-size:14px}
+}

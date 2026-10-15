@@ -1,6 +1,7 @@
 const status = document.querySelector('#offlineStatus');
 const network = document.querySelector('#networkStatus');
 const installButton = document.querySelector('#installApp');
+const installLabel = document.querySelector('#installLabel');
 const updateButton = document.querySelector('#updateApp');
 const help = document.querySelector('#installHelp');
 let installPrompt, registration, reloading = false;
@@ -12,7 +13,7 @@ window.addEventListener('online', () => { updateNetwork(); registration?.update(
 window.addEventListener('offline', updateNetwork);
 window.addEventListener('beforeinstallprompt', event => {
   event.preventDefault(); installPrompt = event;
-  installButton.textContent = 'Install app'; installButton.hidden = false;
+  installLabel.textContent = 'Install app'; installButton.hidden = false;
 });
 window.addEventListener('appinstalled', () => {
   installPrompt = null; installButton.hidden = true; help.hidden = true;
@@ -21,9 +22,11 @@ installButton.addEventListener('click', async () => {
   if (installPrompt) {
     await installPrompt.prompt();
     await installPrompt.userChoice; installPrompt = null;
-    installButton.textContent = 'Install instructions';
+    installLabel.textContent = 'Install app';
   } else {
     help.hidden = !help.hidden;
+    installButton.setAttribute('aria-expanded', String(!help.hidden));
+    if (!help.hidden) help.scrollIntoView({block:'nearest', behavior:'smooth'});
   }
 });
 if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {

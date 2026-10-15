@@ -2,7 +2,8 @@ export class LocalStorageAdapter {
   async open(){this.db=await new Promise((resolve,reject)=>{const r=indexedDB.open('safety-fieldbook',1);r.onupgradeneeded=()=>r.result.createObjectStore('drafts',{keyPath:'id'});r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.onblocked=()=>reject(new Error('Close other Fieldbook tabs and reload.'));});}
   async list(){return new Promise((resolve,reject)=>{const t=this.db.transaction('drafts');const r=t.objectStore('drafts').getAll();r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
   async save(draft){return new Promise((resolve,reject)=>{const t=this.db.transaction('drafts','readwrite');t.objectStore('drafts').put(draft);t.oncomplete=()=>resolve({destination:'local',confirmed:true});t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error||new Error('Local save aborted'));});}
-  async remove(id){return new Promise((resolve,reject)=>{const t=this.db.transaction('drafts','readwrite');t.objectStore('drafts').delete(id);t.oncomplete=resolve;t.onerror=()=>reject(t.error);});}
+  async remove(id){return new Promise((resolve,reject)=>{const t=this.db.transaction('drafts','readwrite');t.objectStore('drafts').delete(id);t.oncomplete=resolve;t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error||new Error('Delete aborted'));});}
+  async clear(){return new Promise((resolve,reject)=>{const t=this.db.transaction('drafts','readwrite');t.objectStore('drafts').clear();t.oncomplete=resolve;t.onerror=()=>reject(t.error);t.onabort=()=>reject(t.error||new Error('Clear aborted'));});}
 }
 // Cloud adapters must implement connect(), upload(exportBundle), disconnect().
 // Only a verified provider response may set a confirmed cloud upload state.
