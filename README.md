@@ -93,3 +93,7 @@ From an inspection, Take photo / Add images starts a finding with captured evide
 ## UX review improvements
 
 Finding and inspection forms now prompt before discarding changed text, including Escape and browser-exit protection. Previously saved photos remain intact when only form edits are discarded. Save/Close actions stay visible in the finding form; Finish later remains near its photo previews, and destructive discard is separated from Save. Finding summaries separate priority and review/completion state, omit zero audio counts and indicate whether details are open. Navigation resets to the page heading, while saving a finding returns focus to that finding. Small metadata/status text uses stronger contrast.
+
+## Compact inspection overview (v2.3)
+
+Mobile navigation uses two tabs with Install and Help in the brand row. A compact status strip expands local-saving guidance and shows network status only when offline. Inspection views put Back above a smaller title, use a readable date and provide review progress with a next-unreviewed action that clears filters and opens the correct page. Export remains available for draft findings.

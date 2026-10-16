@@ -6,7 +6,8 @@ const updateButton = document.querySelector('#updateApp');
 const help = document.querySelector('#installHelp');
 let installPrompt, registration, reloading = false;
 function updateNetwork() {
-  network.textContent = navigator.onLine ? 'Network available' : 'Offline · Working on this device';
+  network.hidden = navigator.onLine;
+  network.textContent = navigator.onLine ? '' : 'You’re offline';
 }
 updateNetwork();
 window.addEventListener('online', () => { updateNetwork(); registration?.update().catch(() => {}); });
@@ -33,7 +34,7 @@ if (window.matchMedia('(display-mode: standalone)').matches || navigator.standal
   installButton.hidden = true;
 }
 function offlineReady() {
-  status.textContent = '✓ Ready for offline use';
+  status.textContent = '✓ Offline ready';
   status.dataset.ready = 'true';
 }
 function offerUpdate() {
