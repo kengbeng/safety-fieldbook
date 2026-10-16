@@ -1,5 +1,5 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v14-compact-overview';
+const VERSION = 'v15-finding-backups';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;

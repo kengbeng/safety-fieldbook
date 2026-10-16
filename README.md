@@ -97,3 +97,7 @@ Finding and inspection forms now prompt before discarding changed text, includin
 ## Compact inspection overview (v2.3)
 
 Mobile navigation uses two tabs with Install and Help in the brand row. A compact status strip expands local-saving guidance and shows network status only when offline. Inspection views put Back above a smaller title, use a readable date and provide review progress with a next-unreviewed action that clears filters and opens the correct page. Export remains available for draft findings.
+
+## Finding and backup refinements (v2.4)
+
+Expanded findings show descriptions once, larger evidence previews, attachment actions, a Reviewed checkbox and separate photo/finding options for deletion. Search composes with Needs review and High priority filters. The edit form groups location fields, uses compact dictation guidance, and enables Save changes only for changed existing details. Storage & backups provides per-inspection ZIP exports without changing the active inspection, explicit browser storage-protection status, and collapsed cloud/cleanup sections.

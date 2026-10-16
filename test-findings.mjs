@@ -7,3 +7,7 @@ result=selectFindings(findings,{query:' science HIGH ',page:99});assert.equal(re
 assert.equal(selectFindings(findings,{query:'003'}).items[0].finding.id,'3');
 assert.deepEqual(selectFindings(findings,{query:'missing'}).items,[]);assert.equal(selectFindings([]).pages,1);
 assert.equal(findings.length,27);console.log('PASS: bounded pages, stable finding numbers, multi-term search, page clamping, empty results, source records unchanged.');
+const evidence=[{id:'a',description:'Complete',photos:[{}],reviewed:true,priority:'High'},{id:'b',description:'Missing photos',photos:[],reviewed:true,priority:'Low'},{id:'c',description:'Pending',photos:[{}],reviewed:false,priority:'High'}];
+assert.deepEqual(selectFindings(evidence,{filter:'needs-review'}).items.map(x=>x.finding.id),['b','c']);
+assert.deepEqual(selectFindings(evidence,{filter:'high',query:'pending'}).items.map(x=>x.finding.id),['c']);
+console.log('PASS: review and priority filters include incomplete reviewed records and compose with search.');
