@@ -113,3 +113,7 @@ New photo imports copy original bytes out of the selected File, decode that copy
 Standard exports stop explicitly on unreadable attachments. Recovery backup exports finding text/metadata, annotation objects and readable originals without rendering; RECOVERY-NOTES.txt and JSON identify missing photo/audio files. A recovery ZIP can be incomplete and is not evidence that inaccessible bytes were recovered.
 
 New findings inherit building, floor and room. Review checkboxes/workflow and review columns are removed; automatic details completeness uses description and photo presence. Legacy review flags may remain in local records for compatibility but do not control current UI or exports. Export schema is 3.
+
+## Lightweight finding entry (v2.7)
+
+Finding entry now asks only for description and optional building/floor/room, with photo and audio attachments. Hazard category and priority controls, summary badges and priority filtering are removed. Existing category/priority data is retained in local records and exports; new entries do not receive invented defaults.

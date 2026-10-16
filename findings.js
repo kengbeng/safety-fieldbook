@@ -9,7 +9,7 @@ export function missingFindingDetails(finding){
 }
 export function findingTitle(finding){return String(finding.description||'').trim()||'Incomplete finding';}
 export function createPhotoFinding(previous,id=crypto.randomUUID()){
- return {id,description:'',building:previous?.building||'',floor:previous?.floor||'',room:previous?.room||'',category:'General safety',priority:'Medium',photos:[],reviewed:false};
+ return {id,description:'',building:previous?.building||'',floor:previous?.floor||'',room:previous?.room||'',photos:[],reviewed:false};
 }
 
 export function selectInspections(inspections,{query='',sort='recent'}={}){
