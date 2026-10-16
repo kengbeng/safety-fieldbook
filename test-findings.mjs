@@ -8,7 +8,7 @@ assert.equal(selectFindings(findings,{query:'003'}).items[0].finding.id,'3');
 assert.deepEqual(selectFindings(findings,{query:'missing'}).items,[]);assert.equal(selectFindings([]).pages,1);
 assert.equal(findings.length,27);console.log('PASS: bounded pages, stable finding numbers, multi-term search, page clamping, empty results, source records unchanged.');
 const evidence=[{id:'a',description:'Complete',photos:[{}],reviewed:true,priority:'High'},{id:'b',description:'Missing photos',photos:[],reviewed:true,priority:'Low'},{id:'c',description:'Pending',photos:[{}],reviewed:false,priority:'High'}];
-assert.deepEqual(selectFindings(evidence,{filter:'needs-review'}).items.map(x=>x.finding.id),['b','c']);
+assert.deepEqual(selectFindings(evidence,{filter:'incomplete'}).items.map(x=>x.finding.id),['b']);
 assert.deepEqual(selectFindings(evidence,{filter:'high',query:'pending'}).items.map(x=>x.finding.id),['c']);
 console.log('PASS: review and priority filters include incomplete reviewed records and compose with search.');
 const {selectInspections,inspectionProgress}=await import('./findings.js');
@@ -18,6 +18,6 @@ assert.deepEqual(selectInspections(records,{sort:'title'}).map(x=>x.id),['b','a'
 assert.deepEqual(selectInspections(records,{sort:'date'}).map(x=>x.id),['b','a']);
 assert.deepEqual(selectInspections(records,{query:' zeta GOH '}).map(x=>x.id),['a']);
 assert.equal(selectInspections(records,{query:'missing'}).length,0);
-assert.deepEqual(inspectionProgress(records[0]),{total:3,reviewed:1,remaining:2});
+assert.deepEqual(inspectionProgress(records[0]),{total:3,reviewed:2,remaining:1});
 assert.deepEqual(inspectionProgress(records[1]),{total:0,reviewed:0,remaining:0});
 assert.equal(records[0].id,'a');console.log('PASS: inspection search/sorts preserve records and review totals include incomplete findings.');

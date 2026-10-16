@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readPhotoBytes,copyOriginal,storedDraft,restoredDraft,verifyPhotoBytes,decodePhoto} from './photo-data.js';
+const source=new Blob([new Uint8Array([255,216,1,2,3])],{type:'image/jpeg'}),copy=await copyOriginal(source);
+assert.deepEqual([...copy.originalBytes],[255,216,1,2,3]);assert.notEqual(copy.blob,source);
+const old={id:'legacy',blob:new Blob(['legacy']),annotations:[]},photo={id:'new',...copy,annotations:[]},draft={id:'d',findings:[{photos:[old,photo]}]};
+const stored=storedDraft(draft);assert.equal(stored.findings[0].photos[1].blob,undefined);assert.ok(stored.findings[0].photos[0].blob);assert.ok(draft.findings[0].photos[1].blob);
+const restored=restoredDraft(structuredClone(stored));assert.deepEqual([...await readPhotoBytes(restored.findings[0].photos[1])],[255,216,1,2,3]);assert.equal(verifyPhotoBytes(stored.findings[0].photos[1],photo),true);
+assert.throws(()=>verifyPhotoBytes({originalBytes:new Uint8Array([1])},photo),/verification/);assert.throws(()=>verifyPhotoBytes(null,photo),/missing/);
+const failing={size:3,arrayBuffer:async()=>{throw new Error('unreadable');}};
+const originalFR=globalThis.FileReader;globalThis.FileReader=class{readAsArrayBuffer(){this.result=new Uint8Array([4,5,6]).buffer;this.onload();}};
+assert.deepEqual([...await readPhotoBytes({blob:failing})],[4,5,6]);
+globalThis.FileReader=class{readAsArrayBuffer(){this.error=new Error('read failed');this.onerror();}};
+await assert.rejects(()=>readPhotoBytes({blob:failing}),/Photo unavailable/);assert.equal(failing.size,3);
+globalThis.FileReader=originalFR;
+const oldBitmap=globalThis.createImageBitmap,oldImage=globalThis.Image;globalThis.createImageBitmap=async()=>{throw new Error('not supported');};
+globalThis.Image=class{set src(value){if(value){this.naturalWidth=40;this.naturalHeight=20;queueMicrotask(()=>this.onload());}}};
+const decoded=await decodePhoto(source);assert.equal(decoded.width,40);assert.equal(decoded.height,20);assert.ok(decoded.source);decoded.close();globalThis.createImageBitmap=oldBitmap;globalThis.Image=oldImage;
+console.log('PASS: independent original bytes, storage round trip without duplicate blobs, legacy preservation, byte verification, alternate recovery, unreadable preservation and image-element decoding fallback.');

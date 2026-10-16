@@ -13,7 +13,7 @@ for(const mode of ['archive','share','full']){
    calls.push(profile);return{blob:new Blob(['rendered'],{type:profile.type}),width:mode==='full'?3000:1600,height:mode==='full'?2000:1067};
  });
  const {folder,files,metadata}=result;
- assert.equal(metadata.schemaVersion,2);assert.equal(metadata.findings[0].reference,'F001');assert.equal(metadata.findings[1].reference,'F002');
+ assert.equal(metadata.schemaVersion,3);assert.equal(metadata.findings[0].reference,'F001');assert.equal(metadata.findings[1].reference,'F002');
  assert.equal(new Set(files.map(f=>f.name)).size,files.length);
  assert.ok(files.every(f=>f.name.startsWith(folder+'/')&&!f.name.split('/').includes('..')));
  for(const name of ['START-HERE.html','findings.csv','photos.csv','inspection.json','README.txt'])assert.ok(files.some(f=>f.name===folder+'/'+name));
@@ -25,7 +25,7 @@ for(const mode of ['archive','share','full']){
  assert.ok(photo.annotated.endsWith(mode==='full'?'.png':'.jpg'));
  assert.deepEqual(photo.annotations,[annotation]);assert.deepEqual(progress,[[1,1]]);
  const report=await files.find(f=>f.name.endsWith('/START-HERE.html')).blob.text();
- assert.ok(!report.includes('<script>'));assert.ok(report.includes('&lt;script&gt;'));assert.ok(report.includes('Needs review'));
+ assert.ok(!report.includes('<script>'));assert.ok(report.includes('&lt;script&gt;'));assert.ok(!report.includes('Needs review'));assert.ok(report.includes('Complete'));assert.equal(metadata.findings[0].reviewed,undefined);
  assert.ok(report.includes('No photos recorded'));assert.equal(report.includes('original photos are NOT included'),mode==='share');
  const csv=await files.find(f=>f.name.endsWith('/findings.csv')).blob.text();assert.deepEqual([...new Uint8Array(await files.find(f=>f.name.endsWith('/findings.csv')).blob.arrayBuffer()).slice(0,3)],[239,187,191]);assert.ok(csv.includes('"001"'));assert.ok(csv.includes("\"'=danger"));
  assert.ok(files.find(f=>f.name===folder+'/'+metadata.findings[1].folder+'/finding.txt'));
@@ -35,5 +35,5 @@ for(const mode of ['archive','share','full']){
 assert.equal(JSON.stringify(draft.findings[0].photos[0].annotations),before);
 assert.equal(csvCell('  +formula'),'"\'  +formula"');
 await assert.rejects(collectExportFiles(draft,{mode:'invalid'}),/Unknown export/);
-await assert.rejects(collectExportFiles(draft,{},async()=>{throw new Error('encode failed')}),/encode failed/);
+await assert.rejects(collectExportFiles(draft,{},async()=>{throw new Error('encode failed')}),/Recovery backup/);
 console.log('PASS: all three profiles, original-byte preservation, compact omission, metadata paths, safe filenames, report escaping, CSV quoting, review warnings, no-photo findings, progress and error handling.');

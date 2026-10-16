@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {collectExportFiles,zipFiles} from './export.js';
+const bad={type:'image/jpeg',size:40,arrayBuffer:async()=>{throw new Error('unreadable');}};
+const annotation={type:'arrow',x:.2,y:.2,dx:.1,dy:.1,color:'#003D7C'};
+const draft={id:'recovery',title:'Recovery test',date:'2026-10-16',inspector:'QA',findings:[{id:'f1',description:'Keep description',building:'E5',floor:'05',room:'005',category:'General safety',priority:'Medium',photos:[{id:'p1',name:'lost.jpg',blob:bad,annotations:[annotation]},{id:'p2',name:'readable.jpg',blob:new Blob(['readable-original'],{type:'image/jpeg'}),annotations:[]}],voiceNotes:[{id:'a1',title:'lost audio',blob:{...bad,type:'audio/webm'}}]}]};
+await assert.rejects(()=>collectExportFiles(draft,{mode:'archive'}),/Recovery backup/);
+const {files,metadata}=await collectExportFiles(draft,{mode:'recovery'},()=>{throw new Error('Must not render during recovery');});
+assert.equal(metadata.recoveryIssues.length,2);assert.equal(metadata.findings[0].description,'Keep description');
+assert.equal(metadata.findings[0].photos.length,2);assert.deepEqual(metadata.findings[0].photos[0].annotations,[annotation]);assert.equal(metadata.findings[0].photos[0].original,null);assert.equal(metadata.findings[0].photos[0].annotated,null);
+assert.equal(metadata.findings[0].voiceNotes[0].audio,null);assert.equal(metadata.findings[0].photos[1].readError,null);
+assert.equal(await files.find(f=>f.name.endsWith('P02_original.jpg')).blob.text(),'readable-original');
+const report=await files.find(f=>f.name.endsWith('START-HERE.html')).blob.text();assert.match(report,/RECOVERY BACKUP/);assert.match(report,/2 unreadable/);assert.ok(!report.includes('href="null"'));assert.ok(!report.includes('src="null"'));
+const notes=await files.find(f=>f.name.endsWith('RECOVERY-NOTES.txt')).blob.text();assert.match(notes,/lost.jpg/);assert.match(notes,/lost audio/);
+assert.equal(draft.findings[0].photos[0].blob,bad);assert.ok((await zipFiles(files)).size>0);
+console.log('PASS: unreadable photo/audio rescue, readable originals, complete finding metadata/annotations, missing-file inventory, no rendering/dead media links and existing records unchanged.');

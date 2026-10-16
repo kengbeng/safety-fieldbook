@@ -105,3 +105,11 @@ Expanded findings show descriptions once, larger evidence previews, attachment a
 ## Resume inspections and footer (v2.5)
 
 The home view prioritises continuing existing inspections with concise review totals, readable dates, review progress and last-edited timestamps. Five or more inspections reveal search by title/inspector/date and sorting by recent edit, inspection date or title. Backup exports do not alter edit timestamps. Footer navigation provides Help and About, retaining NUS ORMC credits and moving version information into About.
+
+## Photo reliability and recovery (v2.6)
+
+New photo imports copy original bytes out of the selected File, decode that copy, store byte arrays in IndexedDB without a duplicate Blob, and compare saved bytes after commit. Existing legacy Blob records remain supported and are not automatically migrated or overwritten by recovery. Runtime recovery tries arrayBuffer, FileReader and Blob URL reads; image decoding falls back to an HTML image element. Photo options provide original downloads and user-triggered device sharing. An iPhone PWA cannot automatically save captures to Photos; users choose Save Image in supported sharing.
+
+Standard exports stop explicitly on unreadable attachments. Recovery backup exports finding text/metadata, annotation objects and readable originals without rendering; RECOVERY-NOTES.txt and JSON identify missing photo/audio files. A recovery ZIP can be incomplete and is not evidence that inaccessible bytes were recovered.
+
+New findings inherit building, floor and room. Review checkboxes/workflow and review columns are removed; automatic details completeness uses description and photo presence. Legacy review flags may remain in local records for compatibility but do not control current UI or exports. Export schema is 3.
