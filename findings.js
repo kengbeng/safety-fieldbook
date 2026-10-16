@@ -7,7 +7,7 @@ export function selectFindings(findings,{query='',page=0,pageSize=10}={}){
 export function missingFindingDetails(finding){
  const missing=[];if(!String(finding.description||'').trim())missing.push('description');if(!finding.photos?.length)missing.push('photos');return missing;
 }
-export function findingTitle(finding){return String(finding.description||'').trim()||'Incomplete finding · Needs description';}
+export function findingTitle(finding){return String(finding.description||'').trim()||'Incomplete finding';}
 export function createPhotoFinding(previous,id=crypto.randomUUID()){
  return {id,description:'',building:previous?.building||'',floor:previous?.floor||'',room:'',category:'General safety',priority:'Medium',photos:[],reviewed:false};
 }

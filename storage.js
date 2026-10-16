@@ -7,4 +7,4 @@ export class LocalStorageAdapter {
 }
 // Cloud adapters must implement connect(), upload(exportBundle), disconnect().
 // Only a verified provider response may set a confirmed cloud upload state.
-export const cloudProviders=[{id:'dropbox',name:'Dropbox',available:false,requirements:'Requires a registered OAuth app with PKCE and a per-user account connection.'},{id:'sharepoint',name:'Microsoft SharePoint',available:false,requirements:'Requires Microsoft app registration, delegated permissions, a destination library and possibly administrator approval.'}];
+export const cloudProviders=[{id:'dropbox',name:'Dropbox',available:false,requirements:'Uploads are not available yet. A future connection will let you choose a Dropbox folder; use a shared folder for central collection.'},{id:'sharepoint',name:'Microsoft SharePoint',available:false,requirements:'Uploads are not available yet. A future connection needs a university site and document library; administrator approval may be required.'}];

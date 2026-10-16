@@ -89,3 +89,7 @@ Select Help in the app navigation for a searchable, offline-ready guide. Topics 
 ## Photo-first findings
 
 From an inspection, Take photo / Add images starts a finding with captured evidence; Add finding retains the details-first route. Only readable images create a record. Each original is saved locally before the next image is processed. New photo-first records inherit only building/floor from the previous finding and start without a description or room. Details open with photo previews. Finish later saves entered partial details; closing keeps saved photos and discards unsaved form edits. Discard finding requires confirmation. Incomplete records remain searchable, cannot be marked reviewed, and are labelled in HTML/CSV/JSON exports. Import errors and failed local saves keep clear status and never claim successful saving.
+
+## UX review improvements
+
+Finding and inspection forms now prompt before discarding changed text, including Escape and browser-exit protection. Previously saved photos remain intact when only form edits are discarded. Save/Close actions stay visible in the finding form; Finish later remains near its photo previews, and destructive discard is separated from Save. Finding summaries separate priority and review/completion state, omit zero audio counts and indicate whether details are open. Navigation resets to the page heading, while saving a finding returns focus to that finding. Small metadata/status text uses stronger contrast.
