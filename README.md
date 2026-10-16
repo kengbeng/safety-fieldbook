@@ -101,3 +101,7 @@ Mobile navigation uses two tabs with Install and Help in the brand row. A compac
 ## Finding and backup refinements (v2.4)
 
 Expanded findings show descriptions once, larger evidence previews, attachment actions, a Reviewed checkbox and separate photo/finding options for deletion. Search composes with Needs review and High priority filters. The edit form groups location fields, uses compact dictation guidance, and enables Save changes only for changed existing details. Storage & backups provides per-inspection ZIP exports without changing the active inspection, explicit browser storage-protection status, and collapsed cloud/cleanup sections.
+
+## Resume inspections and footer (v2.5)
+
+The home view prioritises continuing existing inspections with concise review totals, readable dates, review progress and last-edited timestamps. Five or more inspections reveal search by title/inspector/date and sorting by recent edit, inspection date or title. Backup exports do not alter edit timestamps. Footer navigation provides Help and About, retaining NUS ORMC credits and moving version information into About.

@@ -11,3 +11,13 @@ const evidence=[{id:'a',description:'Complete',photos:[{}],reviewed:true,priorit
 assert.deepEqual(selectFindings(evidence,{filter:'needs-review'}).items.map(x=>x.finding.id),['b','c']);
 assert.deepEqual(selectFindings(evidence,{filter:'high',query:'pending'}).items.map(x=>x.finding.id),['c']);
 console.log('PASS: review and priority filters include incomplete reviewed records and compose with search.');
+const {selectInspections,inspectionProgress}=await import('./findings.js');
+const records=[{id:'a',title:'Zeta inspection',inspector:'Goh',date:'2026-10-10',updatedAt:'2026-10-15T10:00:00Z',findings:evidence},{id:'b',title:'Alpha inspection',inspector:'Wong',date:'2026-10-15',updatedAt:'2026-10-14T10:00:00Z',findings:[]}];
+assert.deepEqual(selectInspections(records).map(x=>x.id),['a','b']);
+assert.deepEqual(selectInspections(records,{sort:'title'}).map(x=>x.id),['b','a']);
+assert.deepEqual(selectInspections(records,{sort:'date'}).map(x=>x.id),['b','a']);
+assert.deepEqual(selectInspections(records,{query:' zeta GOH '}).map(x=>x.id),['a']);
+assert.equal(selectInspections(records,{query:'missing'}).length,0);
+assert.deepEqual(inspectionProgress(records[0]),{total:3,reviewed:1,remaining:2});
+assert.deepEqual(inspectionProgress(records[1]),{total:0,reviewed:0,remaining:0});
+assert.equal(records[0].id,'a');console.log('PASS: inspection search/sorts preserve records and review totals include incomplete findings.');

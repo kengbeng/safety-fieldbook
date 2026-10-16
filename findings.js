@@ -11,3 +11,10 @@ export function findingTitle(finding){return String(finding.description||'').tri
 export function createPhotoFinding(previous,id=crypto.randomUUID()){
  return {id,description:'',building:previous?.building||'',floor:previous?.floor||'',room:'',category:'General safety',priority:'Medium',photos:[],reviewed:false};
 }
+
+export function selectInspections(inspections,{query='',sort='recent'}={}){
+ const terms=query.trim().toLowerCase().split(/\s+/).filter(Boolean);
+ const selected=inspections.filter(d=>{const text=[d.title,d.inspector,d.date].join(' ').toLowerCase();return terms.every(t=>text.includes(t));});
+ return selected.slice().sort((a,b)=>sort==='title'?String(a.title).localeCompare(String(b.title)):sort==='date'?String(b.date).localeCompare(String(a.date)):String(b.updatedAt||'').localeCompare(String(a.updatedAt||'')));
+}
+export function inspectionProgress(d){const total=d.findings.length,reviewed=d.findings.filter(f=>f.reviewed&&!missingFindingDetails(f).length).length;return {total,reviewed,remaining:total-reviewed};}
