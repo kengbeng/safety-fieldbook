@@ -65,6 +65,10 @@ listeners.message({data:{type:'ACTIVATE_UPDATE'}});assert.ok(skipped);
 failInstall=true;await assert.rejects(lifecycle('install'),/network down/);
 const manifest=JSON.parse(await fs.readFile(new URL('./manifest.webmanifest',import.meta.url),'utf8'));
 assert.equal(manifest.start_url,'./');assert.equal(manifest.scope,'./');
+// Manifest IDs resolve against the start URL's origin, not its folder.
+const appOrigin = new URL(scope).origin;
+assert.equal(new URL(manifest.id, appOrigin).href, appOrigin + '/safety-fieldbook/');
+assert.notEqual(new URL(manifest.id, appOrigin).href, new URL('./', appOrigin).href);
 assert.equal(manifest.display,'standalone');
 for(const icon of manifest.icons)await fs.access(new URL('./'+icon.src,import.meta.url));
 console.log('PASS: complete offline shell, subpath navigation, offline asset responses, cache isolation, explicit update activation, failed install rejection, PWA manifest and icons.');
