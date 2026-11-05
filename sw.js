@@ -1,5 +1,5 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v19-unique-app-id';
+const VERSION = 'v21-compact-sharing-default';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
