@@ -197,3 +197,5 @@ dialog{border:1px solid var(--line);border-radius:10px;box-shadow:0 20px 100px #
 .capture-dialog{width:min(760px,calc(100vw - 32px))}.capture-dialog video{display:block;width:100%;max-height:55dvh;object-fit:contain;background:#142539;border-radius:8px;margin:16px 0}.capture-dialog .actions{flex-wrap:wrap}.capture-dialog button{min-height:44px}.install-control.is-installed{background:#edf5fc;cursor:default}.app-header .install-control.has-update{background:#003d7c;color:white;width:auto}.app-header .install-control.has-update #installLabel,.app-header .install-control.is-installed #installLabel{display:inline}.app-header .install-control.is-installed{width:auto}.app-header .install-control.is-installed svg,.app-header .install-control.has-update svg{display:none}
 
 @media(max-width:700px){.app-header .brand-row{flex-wrap:wrap}.app-header .install-control.has-update{font-size:11px;padding:10px 8px}.app-header .install-control.is-installed{font-size:12px;padding:10px 8px}}
+
+.sharing-guide ul{padding-left:22px;line-height:1.65}.sharing-guide li+li{margin-top:10px}
