@@ -1,3 +1,4 @@
+import {createCameraDialog} from './camera.js';
 import {readPhotoBytes,decodePhoto} from './photo-data.js';
 import {selectInspections,inspectionProgress,selectFindings,missingFindingDetails,findingTitle} from './findings.js';
 import {addPhotosToInspection} from './photo-entry.js';
@@ -5,6 +6,9 @@ import {LocalStorageAdapter,cloudProviders} from './storage.js';
 import {VoiceRecorder} from './voice.js';
 import {drawAnnotation,makeExport,exportFilename} from './export.js';
 const $=s=>document.querySelector(s),uid=()=>crypto.randomUUID(),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// Mobile platforms can honour the file input camera capture request, including tablets.
+const supportsCameraCapture = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const cameraCapture=createCameraDialog({dialog:$('#captureDialog'),video:$('#captureVideo'),status:$('#captureStatus'),capture:$('#capturePhoto'),retry:$('#captureRetry'),select:$('#captureCamera'),cancel:$('#captureCancel'),fallback:$('#captureFallback'),onPhoto:(file,target)=>saveImportedPhotos([file],target),onFallback:target=>{photoTarget=target;$('#photoInput').value='';$('#photoInput').click();}});
 const local=new LocalStorageAdapter();let drafts=[],current=null,view='list',editingInspection=null,editingFinding=null,photoTarget=null,photoImportBusy=false,activePhoto=null,bitmap=null,tool='select',selected=-1,drag=null,undo=[],saveChain=Promise.resolve(),saveVersion=0,saveError=false,urls=[];
 const currentDraft=()=>drafts.find(d=>d.id===current);const draftVoiceNotes=d=>d.findings.flatMap(f=>f.voiceNotes||[]);
 let findingsInspection=null,findingsPage=0,findingsQuery='',findingsFilter='all';const expandedFindings=new Set();
@@ -75,9 +79,12 @@ $('#discardFinding').onclick=()=>{const f=currentDraft().findings.find(f=>f.id==
 $('#keepPhotoFinding').onclick=()=>$('#discardFindingDialog').close();$('#discardFindingDialog').addEventListener('cancel',e=>{if($('#confirmDiscardFinding').disabled)e.preventDefault();});
 $('#confirmDiscardFinding').onclick=async()=>{const d=currentDraft(),index=d.findings.findIndex(f=>f.id===discardingFinding);if(index<0)return;const [removed]=d.findings.splice(index,1);$('#confirmDiscardFinding').disabled=true;$('#keepPhotoFinding').disabled=true;try{await persist(d);if(saveError){d.findings.splice(index,0,removed);$('#discardFindingSummary').textContent='Discard could not be saved. The finding remains in memory; export a backup before closing.';return;}$('#discardFindingDialog').close();$('#findingDialog').close();render();}finally{$('#confirmDiscardFinding').disabled=false;$('#keepPhotoFinding').disabled=false;}};
 
-function choosePhotos(findingId=null,camera=false){if(photoImportBusy)return;photoTarget={inspectionId:current,findingId};const input=$(camera?'#cameraInput':'#photoInput');input.value='';input.click();}
+function choosePhotos(findingId=null,camera=false){if(photoImportBusy)return;photoTarget={inspectionId:current,findingId};if(camera&&!supportsCameraCapture){const target=photoTarget;photoTarget=null;cameraCapture.open(target);return;}const input=$(camera?'#cameraInput':'#photoInput');input.value='';input.click();}
 async function importPhotos(e){
- const files=[...e.target.files],target=photoTarget;e.target.value='';photoTarget=null;if(!files.length||!target||photoImportBusy)return;
+ const files=[...e.target.files],target=photoTarget;e.target.value='';photoTarget=null;return saveImportedPhotos(files,target);
+}
+async function saveImportedPhotos(files,target){
+ if(!files.length||!target||photoImportBusy)return;
  const d=drafts.find(d=>d.id===target.inspectionId);if(!d)return;photoImportBusy=true;$('#photoImportDialog').showModal();let result;
  try{result=await addPhotosToInspection({draft:d,files,findingId:target.findingId,save:async draft=>{await persist(draft);if(saveError)throw new Error('Local save failed');},verify:async(draft,photo)=>{try{$('#saveStatus').textContent='Saving and verifying photo…';await local.verifyPhoto(draft.id,photo);$('#saveStatus').textContent='● Photo saved and verified on device';}catch(e){saveError=true;$('#saveStatus').textContent='⚠ Photo save verification failed · keep app open';throw e;}},onProgress:(n,total)=>{$('#photoImportStatus').textContent=`Preparing and saving photo ${n} of ${total}…`;}});}
  catch(e){error(e);}finally{photoImportBusy=false;$('#photoImportDialog').close();render();}
