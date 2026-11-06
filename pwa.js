@@ -11,10 +11,11 @@ function updateReady(){return !!(navigator.serviceWorker?.controller && registra
 function renderAppControl(){
  const update=updateReady(), app=installed();
  installButton.hidden=false;
- installLabel.textContent=update?'Update & reload':app?'✓ Installed':'Install app';
+ installLabel.textContent=reloading?'Updating…':update?'Update available':app?'✓ Installed':'Install app';
+ installButton.disabled=reloading;
  installButton.classList.toggle('has-update',update);installButton.classList.toggle('is-installed',app&&!update);
- installButton.title=update?'An update is ready. Finish editing, then update and reload.':app?'Safety Fieldbook is installed':'Install app or view installation instructions';
- installButton.setAttribute('aria-label',installLabel.textContent);installButton.setAttribute('aria-disabled',String(app&&!update));
+ installButton.title=reloading?'Applying the update and reloading…':update?'An update is ready. Finish editing, then update and reload.':app?'Safety Fieldbook is installed':'Install app or view installation instructions';
+ installButton.setAttribute('aria-label',installLabel.textContent);installButton.setAttribute('aria-disabled',String(reloading||(app&&!update)));
  installButton.setAttribute('aria-expanded',String(!help.hidden));
  updateButton.hidden=true;
 }
@@ -35,6 +36,7 @@ window.addEventListener('appinstalled', () => {
   installPrompt = null; installedThisSession = true; help.hidden = true; renderAppControl();
 });
 installButton.addEventListener('click', async () => {
+  if(reloading)return;
   if(updateReady()){applyUpdate();return;}
   if(installed())return;
   if (installPrompt) {
@@ -63,6 +65,7 @@ function applyUpdate() {
   }
   if (registration?.waiting) {
     reloading = true;
+    renderAppControl();
     registration.waiting.postMessage({type: 'ACTIVATE_UPDATE'});
   }
 }
