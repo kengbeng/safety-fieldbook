@@ -1,5 +1,5 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v1.0-release';
+const VERSION = 'v1.0-report-studio-guidance';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
