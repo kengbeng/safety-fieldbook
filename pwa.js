@@ -1,101 +1,30 @@
-const status = document.querySelector('#offlineStatus');
-const network = document.querySelector('#networkStatus');
-const installButton = document.querySelector('#installApp');
-const installLabel = document.querySelector('#installLabel');
-const updateButton = document.querySelector('#updateApp');
-const help = document.querySelector('#installHelp');
-let installPrompt, registration, reloading = false, installedThisSession = false;
-const appDisplay = window.matchMedia('(display-mode: standalone)');
-function installed(){return installedThisSession || appDisplay.matches || navigator.standalone === true || window.matchMedia('(display-mode: window-controls-overlay)').matches;}
-function updateReady(){return !!(navigator.serviceWorker?.controller && registration?.waiting);}
-function renderAppControl(){
- const update=updateReady(), app=installed();
- installButton.hidden=false;
- installLabel.textContent=reloading?'Updating…':update?'Update available':app?'✓ Installed':'Install app';
- installButton.disabled=reloading;
- installButton.classList.toggle('has-update',update);installButton.classList.toggle('is-installed',app&&!update);
- installButton.title=reloading?'Applying the update and reloading…':update?'An update is ready. Finish editing, then update and reload.':app?'Safety Fieldbook is installed':'Install app or view installation instructions';
- installButton.setAttribute('aria-label',installLabel.textContent);installButton.setAttribute('aria-disabled',String(reloading||(app&&!update)));
- installButton.setAttribute('aria-expanded',String(!help.hidden));
- updateButton.hidden=true;
-}
-appDisplay.addEventListener('change',renderAppControl);
-renderAppControl();
-function updateNetwork() {
-  network.hidden = navigator.onLine;
-  network.textContent = navigator.onLine ? '' : 'You’re offline';
-}
-updateNetwork();
-window.addEventListener('online', () => { updateNetwork(); registration?.update().catch(() => {}); });
-window.addEventListener('offline', updateNetwork);
-window.addEventListener('beforeinstallprompt', event => {
-  event.preventDefault(); installPrompt = event;
-  renderAppControl();
-});
-window.addEventListener('appinstalled', () => {
-  installPrompt = null; installedThisSession = true; help.hidden = true; renderAppControl();
-});
-installButton.addEventListener('click', async () => {
-  if(reloading)return;
-  if(updateReady()){applyUpdate();return;}
-  if(installed())return;
-  if (installPrompt) {
-    await installPrompt.prompt();
-    await installPrompt.userChoice; installPrompt = null;
-    renderAppControl();
-  } else {
-    help.hidden = !help.hidden;
-    installButton.setAttribute('aria-expanded', String(!help.hidden));
-    if (!help.hidden) help.scrollIntoView({block:'nearest', behavior:'smooth'});
-  }
-});
-renderAppControl();
-function offlineReady() {
-  status.textContent = '✓ Offline ready';
-  status.dataset.ready = 'true';
-}
-function offerUpdate() {
-  renderAppControl();
-}
-function applyUpdate() {
-  if (document.querySelector('dialog[open]') ||
-      /Saving|failed/i.test(document.querySelector('#saveStatus').textContent)) {
-    help.textContent = 'Finish editing and confirm your draft is saved, then apply the update.';
-    help.hidden = false; return;
-  }
-  if (registration?.waiting) {
-    reloading = true;
-    renderAppControl();
-    registration.waiting.postMessage({type: 'ACTIVATE_UPDATE'});
-  }
-}
-updateButton.addEventListener('click', applyUpdate);
-if ('serviceWorker' in navigator && window.isSecureContext) {
-  try {
-    registration = await navigator.serviceWorker.register('./sw.js', {scope: './', updateViaCache: 'none'});
-    if (navigator.serviceWorker.controller) offlineReady();
-    navigator.serviceWorker.addEventListener('message', event => {
-      if (event.data?.type === 'OFFLINE_READY') offlineReady();
-    });
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (reloading) location.reload();
-      else { offlineReady(); offerUpdate(); }
-    });
-    navigator.serviceWorker.ready.then(offlineReady);
-    offerUpdate();
-    registration.addEventListener('updatefound', () => {
-      const worker = registration.installing;
-      worker?.addEventListener('statechange', () => {
-        if (worker.state === 'installed') offerUpdate();
-        if (worker.state === 'redundant' && !navigator.serviceWorker.controller) {
-          status.textContent = 'Offline preparation failed · Reopen while online';
-        }
-      });
-    });
-  } catch (error) {
-    status.textContent = 'Offline preparation unavailable · Reopen while online';
-    console.error('Offline setup failed', error);
-  }
-} else {
-  status.textContent = 'Offline app loading needs HTTPS and service worker support';
-}
+const $=s=>document.querySelector(s),button=$('#installApp'),label=$('#installLabel'),help=$('#installHelp'),info=$('#appInfoDialog'),message=$('#installMessage'),status=$('#offlineStatus'),network=$('#networkStatus');
+let prompt=null,registration=null,detected=false,applying=false,timer=null;
+const display=window.matchMedia('(display-mode: standalone)');
+const installed=()=>detected||display.matches||navigator.standalone===true||window.matchMedia('(display-mode: window-controls-overlay)').matches;
+const waiting=()=>!!registration?.waiting;
+function note(text){message.textContent=text;}
+function renderAppControl(){const app=installed(),update=waiting();label.textContent=applying?'Updating…':update?'Update available':app?'Installed':'Install app';button.hidden=false;button.disabled=applying;button.dataset.state=applying?'updating':update?'update':app?'installed':'install';button.classList.toggle('has-update',update);button.classList.toggle('is-installed',app&&!update);button.title=applying?'Applying update…':update?'Save your work and apply the available update':app?'App installed. View app information and check for updates':'Install Safety Fieldbook';button.setAttribute('aria-label',label.textContent);button.setAttribute('aria-disabled',String(applying));button.setAttribute('aria-haspopup','dialog');button.setAttribute('aria-controls','appInfoDialog');$('#updateApp').hidden=true;}
+function showInfo(){if(!info.open)info.showModal();}
+function connectivity(){network.hidden=navigator.onLine;network.textContent=navigator.onLine?'':'You’re offline';}
+function windowCount(){return new Promise((resolve,reject)=>{const worker=registration?.active;if(!worker)return resolve(1);const channel=new MessageChannel();const timeout=setTimeout(()=>{channel.port1.close();reject(Error('Could not confirm open app windows. Close other Fieldbook windows and try again.'));},4000);channel.port1.onmessage=e=>{clearTimeout(timeout);channel.port1.close();resolve(e.data.windows);};worker.postMessage({type:'STATUS'},[channel.port2]);});}
+async function applyUpdate(){if(applying||!waiting())return;
+ if(document.querySelector('dialog[open]')){note('Finish editing and close open dialogs before updating.');showInfo();return;}
+ applying=true;renderAppControl();note('Saving work and preparing update…');
+ try{const request=new CustomEvent('fieldbook:prepare-update',{detail:{tasks:[]}});window.dispatchEvent(request);await Promise.all(request.detail.tasks);if(/Saving|failed/i.test($('#saveStatus').textContent))throw Error('Confirm your draft is saved before updating.');
+ if(registration.active?.scriptURL && (await windowCount())>1)throw Error('Close other Safety Fieldbook tabs and app windows, then try updating again.');
+ if(!waiting())throw Error('The update is no longer waiting. Reload when your work is saved.');
+ note('Applying update… The app will reload automatically.');timer=setTimeout(()=>{applying=false;renderAppControl();note('The update has not finished. Save your work, close other app windows and try again.');showInfo();},12000);registration.waiting.postMessage({type:'ACTIVATE_UPDATE'});
+ }catch(e){clearTimeout(timer);applying=false;renderAppControl();note(e.message);showInfo();}}
+button.onclick=async()=>{if(applying)return;if(waiting())return applyUpdate();if(prompt){const current=prompt;prompt=null;try{await current.prompt();const result=await current.userChoice;note(result.outcome==='accepted'?'Installation requested. Your browser will confirm when it is installed.':'Installation cancelled. You can still use the browser version.');}catch{note('The browser install prompt is unavailable. Use the installation instructions.');showInfo();}renderAppControl();}else showInfo();};
+$('#closeAppInfo').onclick=()=>info.close();$('#checkAppUpdate').onclick=async()=>{if(!registration||!navigator.onLine){note('Connect to the internet to check for updates.');return;}try{await registration.update();renderAppControl();note(waiting()?'Update available. Close this dialog and choose Update available.':'Update check requested. A new version will be indicated when ready.');}catch{note('Could not check for updates. Try again when connected.');}};
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();prompt=e;detected=false;renderAppControl();});window.addEventListener('appinstalled',()=>{prompt=null;detected=true;renderAppControl();note('Installed. Open Safety Fieldbook from your device’s apps.');});display.addEventListener('change',renderAppControl);
+window.addEventListener('online',()=>{connectivity();registration?.update().catch(()=>{});});window.addEventListener('offline',connectivity);connectivity();renderAppControl();
+try{if(sessionStorage.getItem('fieldbook-update-complete')){sessionStorage.removeItem('fieldbook-update-complete');note('App updated successfully. Your saved inspections are ready.');}}catch{}
+if(navigator.getInstalledRelatedApps)try{const manifest=new URL('./manifest.webmanifest',location.href).href;detected=(await navigator.getInstalledRelatedApps()).some(app=>app.platform==='webapp'&&new URL(app.url,location.href).href===manifest);renderAppControl();}catch{}
+function ready(){status.textContent='✓ Offline ready';status.dataset.ready='true';}
+if('serviceWorker' in navigator&&window.isSecureContext){
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(applying){clearTimeout(timer);try{sessionStorage.setItem('fieldbook-update-complete','1');}catch{}location.reload();}else{ready();renderAppControl();}});
+ navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='OFFLINE_READY')ready();});
+ try{registration=await navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});if(navigator.serviceWorker.controller)ready();navigator.serviceWorker.ready.then(ready);renderAppControl();registration.addEventListener('updatefound',()=>{const worker=registration.installing;worker?.addEventListener('statechange',()=>{if(worker.state==='installed')renderAppControl();if(worker.state==='redundant'&&!navigator.serviceWorker.controller)status.textContent='Offline preparation failed · Reopen while online';});});if(navigator.onLine)registration.update().catch(()=>{});}catch{status.textContent='Offline preparation unavailable · Reopen while online';}
+}else status.textContent='Offline app loading needs HTTPS and service worker support';

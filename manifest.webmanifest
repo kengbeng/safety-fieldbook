@@ -2,7 +2,7 @@
   "id": "/safety-fieldbook/",
   "name": "Safety Fieldbook",
   "short_name": "Fieldbook",
-  "description": "Capture and review university safety inspections, photos and annotations offline.",
+  "description": "A lightweight app for on-site inspections, photos and findings—even offline.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -27,6 +27,13 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "./manifest.webmanifest",
+      "id": "https://kengbeng.github.io/safety-fieldbook/"
     }
   ]
 }
