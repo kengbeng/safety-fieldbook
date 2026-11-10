@@ -22,7 +22,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();prompt=e;de
 window.addEventListener('online',()=>{connectivity();registration?.update().catch(()=>{});});window.addEventListener('offline',connectivity);connectivity();renderAppControl();
 try{if(sessionStorage.getItem('fieldbook-update-complete')){sessionStorage.removeItem('fieldbook-update-complete');note('App updated successfully. Your saved inspections are ready.');}}catch{}
 if(navigator.getInstalledRelatedApps)try{const manifest=new URL('./manifest.webmanifest',location.href).href;detected=(await navigator.getInstalledRelatedApps()).some(app=>app.platform==='webapp'&&new URL(app.url,location.href).href===manifest);renderAppControl();}catch{}
-function ready(){status.textContent='✓ Offline ready';status.dataset.ready='true';}
+function ready(){status.textContent='Offline ready';status.dataset.ready='true';}
 if('serviceWorker' in navigator&&window.isSecureContext){
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(applying){clearTimeout(timer);try{sessionStorage.setItem('fieldbook-update-complete','1');}catch{}location.reload();}else{ready();renderAppControl();}});
  navigator.serviceWorker.addEventListener('message',e=>{if(e.data?.type==='OFFLINE_READY')ready();});
