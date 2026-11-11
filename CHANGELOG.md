@@ -1,5 +1,12 @@
 # Releases
 
+## 1.3.0 — 11 Nov 2026
+
+- Download field notes as a PDF with raw observations, locations, voice-note transcripts and optional annotated photos.
+- Keep PDF downloads separate from ZIP exports for Report Studio.
+- Generate PDFs locally and cache PDF tools for offline use.
+- Label unavailable photos and preserve stored inspection records.
+
 ## 1.2.2 — 11 Nov 2026
 
 - Advance the tutorial after retrying a failed inspection save.

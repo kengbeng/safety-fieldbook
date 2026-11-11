@@ -29,7 +29,7 @@ vm.runInContext(source, context);
 async function lifecycle(type) {let task;listeners[type]({waitUntil:p=>task=p});return task;}
 await lifecycle('install');
 const activeName=[...cachesByName.keys()][0];
-assert.equal(cachesByName.get(activeName).size,20);
+assert.equal(cachesByName.get(activeName).size,22);
 for (const url of cachesByName.get(activeName).keys()) {
  assert.ok(url.startsWith(scope));
  const relative=url.slice(scope.length);
@@ -72,3 +72,5 @@ assert.notEqual(new URL(manifest.id, appOrigin).href, new URL('./', appOrigin).h
 assert.equal(manifest.display,'standalone');
 for(const icon of manifest.icons)await fs.access(new URL('./'+icon.src,import.meta.url));
 console.log('PASS: complete offline shell, subpath navigation, offline asset responses, cache isolation, explicit update activation, failed install rejection, PWA manifest and icons.');
+
+
