@@ -1,5 +1,13 @@
 # Releases
 
+## 1.3.1 — 11 Nov 2026
+
+- Simplify field notes to A4 with compact photo rows, clear finding bands and repeated continuation labels.
+- Remove repeated explanatory text from PDFs and shorten export dialogs.
+- Keep Compact sharing recommended; place other ZIP options in a disclosure.
+- Move Edit details alongside inspection metadata and stack mobile downloads.
+- Show a clear empty inspection state and disable downloads until a finding exists.
+
 ## 1.3.0 — 11 Nov 2026
 
 - Download field notes as a PDF with raw observations, locations, voice-note transcripts and optional annotated photos.
