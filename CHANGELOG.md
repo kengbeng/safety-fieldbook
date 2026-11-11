@@ -1,5 +1,12 @@
 # Releases
 
+## 1.2.2 — 11 Nov 2026
+
+- Advance the tutorial after retrying a failed inspection save.
+- Keep photo guidance tied to the intended finding.
+- Require an explicit choice to continue without photos.
+- Move keyboard focus with popup steps and preserve form entry focus.
+
 ## 1.2.1 — 11 Nov 2026
 
 - Present tutorial introductions, installation and completion as centred popups.
