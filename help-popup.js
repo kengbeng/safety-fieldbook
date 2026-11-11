@@ -1,4 +1,4 @@
 const dialog=document.querySelector('#helpDialog'),frame=document.querySelector('#helpFrame');
 document.addEventListener('click',event=>{const link=event.target.closest('a[href]');if(!link||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;const url=new URL(link.href,location.href);if(url.origin!==location.origin||! /\/help(?:\.html)?$/.test(url.pathname))return;event.preventDefault();if(frame.getAttribute('src')!==url.href)frame.src=url.href;if(!dialog.open)dialog.showModal();});
 document.querySelector('#closeHelp').onclick=()=>dialog.close();
-window.addEventListener('message',event=>{if(event.origin===location.origin&&event.source===frame.contentWindow&&event.data?.type==='fieldbook:close-help')dialog.close();});
+window.addEventListener('message',event=>{if(event.origin!==location.origin||event.source!==frame.contentWindow)return;if(event.data?.type==='fieldbook:close-help')dialog.close();if(event.data?.type==='fieldbook:replay-tutorial'){dialog.close();window.dispatchEvent(new Event('fieldbook:replay-tutorial'));}});

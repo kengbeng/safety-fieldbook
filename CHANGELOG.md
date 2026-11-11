@@ -1,5 +1,11 @@
 # Releases
 
+## 1.2.0 — 11 Nov 2026
+
+- Add an optional first-inspection tutorial, including app installation, findings and ZIP export.
+- Resume interrupted walkthroughs and replay from Help.
+- Keep tutorial guidance in the page or form without covering capture controls.
+
 ## 1.1.0 — 10 Nov 2026
 
 - Move saving and offline status below the page title.

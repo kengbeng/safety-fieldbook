@@ -13,3 +13,5 @@ query.addEventListener('input',filter);clear.onclick=()=>{query.value='';filter(
 document.querySelectorAll('.help-topics a').forEach(a=>a.addEventListener('click',()=>{query.value='';filter();const topic=topics.find(t=>'#'+t.id===a.getAttribute('href'));if(topic){topic.open=true;topic.querySelector('summary').focus();}}));window.addEventListener('hashchange',openHash);filter();openHash();
 
 if(window.parent!==window){document.body.classList.add('help-embedded');document.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();window.parent.postMessage({type:'fieldbook:close-help'},location.origin);}});}
+
+document.querySelector('#replayTutorial').onclick=()=>{if(window.parent!==window)window.parent.postMessage({type:'fieldbook:replay-tutorial'},location.origin);else location.href='./?tutorial=1';};
