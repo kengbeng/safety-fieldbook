@@ -1,5 +1,11 @@
 # Releases
 
+## 1.2.1 — 11 Nov 2026
+
+- Present tutorial introductions, installation and completion as centred popups.
+- Place desktop guidance near controls and mobile guidance above the action bar.
+- Retain form guidance, Skip, Resume and Replay.
+
 ## 1.2.0 — 11 Nov 2026
 
 - Add an optional first-inspection tutorial, including app installation, findings and ZIP export.

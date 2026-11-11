@@ -20,6 +20,31 @@ export function createTutorial({getContext,openInspection,openFinding,openExport
  let state=null,initialised=false,visible=false,resume=false,lastAnnouncement='';
  const $=s=>document.querySelector(s),card=document.createElement('section');card.className='tutorial-card';card.setAttribute('aria-label','First inspection tutorial');card.innerHTML='<div class="tutorial-heading"><span class="tutorial-step"></span><button type="button" class="tutorial-skip">Skip tutorial</button></div><h2 class="tutorial-title" tabindex="-1"></h2><p class="tutorial-copy"></p><p class="tutorial-feedback" role="status" aria-live="polite"></p><div class="tutorial-actions"></div>';
  const title=card.querySelector('.tutorial-title'),copy=card.querySelector('.tutorial-copy'),actions=card.querySelector('.tutorial-actions'),feedback=card.querySelector('.tutorial-feedback');
+
+ const popup=document.createElement('dialog');popup.className='tutorial-popup';popup.setAttribute('aria-labelledby','tutorialPopupTitle');
+ const coach=document.createElement('div');coach.className='tutorial-popover';coach.setAttribute('popover','manual');coach.setAttribute('role','dialog');coach.setAttribute('aria-modal','false');coach.setAttribute('aria-labelledby','tutorialPopupTitle');coach.hidden=true;
+ title.id='tutorialPopupTitle';document.body.append(popup,coach);let coachVisible=false,positionFrame=0;
+ function hideCoach(){coachVisible=false;if(coach.matches(':popover-open'))coach.hidePopover();coach.hidden=true;}
+ function hidePresentation(){hideCoach();if(popup.open)popup.close();}
+ function pause(){visible=false;if(state?.status==='invited')state={...state,status:'dismissed'};persist();hidePresentation();card.remove();clearHighlight();}
+ popup.addEventListener('cancel',event=>{event.preventDefault();pause();});
+ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&coachVisible&&!document.querySelector('dialog[open]')){event.preventDefault();pause();}});
+ function placeCard(host,center){
+  if(host){hidePresentation();host.append(card);return;}
+  if(center){hideCoach();popup.append(card);if(!popup.open){popup.showModal();queueMicrotask(()=>actions.querySelector('button')?.focus({preventScroll:true}));}return;}
+  if(popup.open)popup.close();coach.append(card);coach.hidden=false;coachVisible=true;if(coach.showPopover&&!coach.matches(':popover-open'))coach.showPopover();queueMicrotask(positionCoach);
+ }
+ function positionCoach(){if(!coachVisible||coach.hidden)return;const target=document.querySelector('.tutorial-target'),r=target?.getBoundingClientRect(),box=coach.getBoundingClientRect(),margin=16;
+  if(innerWidth<=700){const bar=document.querySelector('.finding-entry-actions'),b=bar?.getBoundingClientRect();const fixed=bar&&getComputedStyle(bar).position==='fixed'&&b.top<innerHeight;coach.style.left='16px';coach.style.right='16px';coach.style.top='auto';coach.style.bottom=(fixed?Math.max(16,innerHeight-b.top+12):16)+'px';return;}
+  coach.style.right='auto';coach.style.bottom='auto';const width=box.width,height=box.height;
+  let left=innerWidth-width-margin,top=100;
+  if(r&&r.bottom>0&&r.top<innerHeight){left=Math.min(innerWidth-width-margin,Math.max(margin,r.right-width));if(r.bottom+12+height<=innerHeight-margin)top=r.bottom+12;else if(r.top-12-height>=margin)top=r.top-12-height;else{top=Math.max(margin,Math.min(innerHeight-height-margin,r.top));left=r.left-width-16>=margin?r.left-width-16:r.right+16+width<=innerWidth-margin?r.right+16:left;}}
+  coach.style.left=left+'px';coach.style.top=Math.max(margin,Math.min(top,innerHeight-height-margin))+'px';
+ }
+ function requestPosition(){if(!positionFrame)positionFrame=requestAnimationFrame(()=>{positionFrame=0;positionCoach();});}
+ window.addEventListener('resize',requestPosition);window.addEventListener('scroll',requestPosition,{passive:true});window.visualViewport?.addEventListener('resize',requestPosition);
+ new ResizeObserver(requestPosition).observe(card);
+
  function persist(){try{storage.setItem(key,JSON.stringify(state));}catch{}}
  function clearHighlight(){document.querySelectorAll('.tutorial-target').forEach(n=>n.classList.remove('tutorial-target'));}
  function setState(value){state=value;persist();refresh();}
@@ -34,16 +59,16 @@ export function createTutorial({getContext,openInspection,openFinding,openExport
  else if(!state&&existingCount===0){state={version:1,status:'invited',stage:'welcome'};visible=true;persist();}
  else if(!state){state={version:1,status:'dismissed',stage:'welcome'};persist();}
  refresh();}
- function resumeAction(){resume=false;visible=true;const c=getContext();if(state.inspectionId&&c.inspections.some(d=>d.id===state.inspectionId)&&!document.querySelector('dialog[open]'))openDraft(state.inspectionId);refresh();}
+ function resumeAction(){resume=false;visible=true;const c=getContext();if(state.inspectionId&&c.inspections.some(d=>d.id===state.inspectionId)&&!document.querySelector('dialog[open]:not(.tutorial-popup)'))openDraft(state.inspectionId);refresh();}
  function refresh(){
-  if(!initialised)return;clearHighlight();if(!visible){card.remove();return;}
+  if(!initialised)return;clearHighlight();if(!visible){hidePresentation();card.remove();return;}
   const c=getContext(),draft=c.inspections.find(d=>d.id===state.inspectionId);
   if(state.status==='active'&&!resume&&state.inspectionId&&!draft){state={...state,stage:'inspection',inspectionId:null,findingId:null};persist();}
   if(state.status==='active'&&!resume&&draft&&state.findingId&&!draft.findings.some(f=>f.id===state.findingId)&&['details','annotate','export','complete'].includes(state.stage)){state={...state,stage:'capture',findingId:null};persist();}
-  const openDialogs=[...document.querySelectorAll('dialog[open]')],top=openDialogs.at(-1);
+  const openDialogs=[...document.querySelectorAll('dialog[open]:not(.tutorial-popup)')],top=openDialogs.at(-1);
   const hosts={inspectionDialog:'#inspectionTutorial',findingDialog:'#findingTutorial',exportDialog:'#exportTutorial',appInfoDialog:'#installTutorial'};
-  if(top&&!hosts[top.id]){card.remove();return;}
-  const host=$(top?hosts[top.id]:'#tutorialHost');if(!host)return;host.append(card);actions.replaceChildren();feedback.textContent='';card.querySelector('.tutorial-skip').hidden=state.stage==='complete'&&!resume;
+  if(top&&!hosts[top.id]){hidePresentation();card.remove();return;}
+  const host=top?$(hosts[top.id]):null;if(top&&!host)return;placeCard(host,!top&&(resume||['welcome','install','complete'].includes(state.stage)));actions.replaceChildren();feedback.textContent='';card.querySelector('.tutorial-skip').hidden=state.stage==='complete'&&!resume;
   const step={welcome:1,install:2,inspection:3,capture:4,details:5,annotate:5,export:6,complete:6}[state.stage];card.querySelector('.tutorial-step').textContent=resume?'Your first inspection':state.stage==='complete'?'Tutorial complete':`Step ${step} of 6`;
   if(resume){title.textContent='Resume your walkthrough?';copy.textContent='Continue from where you stopped. Your inspection records are unchanged.';button('Resume tutorial',resumeAction,true);button('Not now',()=>{visible=false;refresh();});return;}
   if(state.stage==='welcome'){title.textContent='Your first inspection';copy.textContent='Create an inspection, capture a finding and export your work. Your records stay on this device, so export a ZIP to keep a separate copy.';button('Start tutorial',start,true);button('Not now',dismiss);return;}
