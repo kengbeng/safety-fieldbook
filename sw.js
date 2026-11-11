@@ -1,5 +1,5 @@
 /* Increment this version whenever any app-shell asset changes. */
-const VERSION = 'v1.3.0-2026-11-11';
+const VERSION = 'v1.3.0-2026-11-11-pdf-layout';
 const SCOPE = self.registration.scope;
 const CACHE_PREFIX = `safety-fieldbook:${new URL(SCOPE).pathname}:`;
 const CACHE_NAME = CACHE_PREFIX + VERSION;
