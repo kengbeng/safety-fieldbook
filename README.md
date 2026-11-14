@@ -126,9 +126,11 @@ confirm both, then send the existing default Compact ZIP. Report Studio must
 accept, verify, import and save before the phone reports success. The original
 inspection remains on the phone. Existing ZIP downloads work without signalling.
 
-The branch ships with direct transfer unconfigured. Set `signallingUrl` in
-`transfer-config.json` only after provisioning and testing the backend. Cloudflare
+This feature branch now uses the deployed staging `signallingUrl` in
+`transfer-config.json`. Cloudflare
 Workers + Durable Objects deployment configuration and instructions are in the
 Report Studio companion branch at `signalling/README.md`. That branch also
-contains a Node reference server and a two-app browser test harness. No backend
-or production application has been deployed by these source changes.
+contains a Node reference server and a two-app browser test harness. The staging backend has been deployed with user authorisation; production
+applications remain unchanged.
+
+Staging signalling deployed with user authorisation on 14 November 2026: https://safety-fieldbook-signalling-staging.kengbeng.workers.dev. This feature branch points to staging; production apps are unchanged. STUN is enabled; TURN credentials and physical-device acceptance are still pending.
