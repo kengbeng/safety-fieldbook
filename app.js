@@ -112,7 +112,7 @@ $('#exportDialog').addEventListener('cancel',e=>{if(exportBusy)e.preventDefault(
 $('#sendStudio').onclick=async()=>{
  if(exportBusy)return;const d=drafts.find(d=>d.id===exportTarget);if(!d)return;
  const snapshot=structuredClone(d);$('#exportDialog').close();
- await openTransfer({role:'sender',prepare:async status=>{
+ await openTransfer({role:'sender',context:snapshot.title,description:`${countLabel(snapshot.findings.length,'finding')} · ${countLabel(draftPhotos(snapshot).length,'photo')}`,fallback:()=>{exportCurrent(d);$('#downloadExport').click();},prepare:async status=>{
   await saveChain;const exportedAt=new Date().toISOString();
   const blob=await makeExport(snapshot,{mode:'share',exportedAt,onProgress:(n,total)=>status(`Preparing photo ${n} of ${total}…`)});
   return {blob,name:exportFilename(snapshot,'share',exportedAt)};
