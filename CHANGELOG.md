@@ -1,5 +1,9 @@
 # Releases
 
+## 1.4.0 · 14 Nov 2026
+
+Send inspections directly to Report Studio using QR pairing and the existing Compact ZIP. Added shared transfer screens with inspection/report context, a code comparison with one receiving-device confirmation, sending/receiving progress bars, percentage and byte counts, QR countdown/regeneration, copy/paste pairing, retry and ZIP fallback actions, clear saved confirmation and protected local saving. Updated Help and What’s New. Original phone records and ZIP exports remain unchanged.
+
 ## 1.3.1 — 11 Nov 2026
 
 - Simplify field notes to A4 with compact photo rows, clear finding bands and repeated continuation labels.
