@@ -1,3 +1,4 @@
+import {openTransfer} from './transfer-ui.mjs';
 import {makeFieldNotes,fieldNotesFilename} from './field-notes.js';
 import {createTutorial} from './tutorial.js';
 import {createCameraDialog} from './camera.js';
@@ -108,10 +109,19 @@ function exportCurrent(d=currentDraft()){
   $('#exportStatus').textContent='';$('#exportDialog').showModal();tutorial.refresh();
 }
 $('#exportDialog').addEventListener('cancel',e=>{if(exportBusy)e.preventDefault();});
+$('#sendStudio').onclick=async()=>{
+ if(exportBusy)return;const d=drafts.find(d=>d.id===exportTarget);if(!d)return;
+ const snapshot=structuredClone(d);$('#exportDialog').close();
+ await openTransfer({role:'sender',prepare:async status=>{
+  await saveChain;const exportedAt=new Date().toISOString();
+  const blob=await makeExport(snapshot,{mode:'share',exportedAt,onProgress:(n,total)=>status(`Preparing photo ${n} of ${total}…`)});
+  return {blob,name:exportFilename(snapshot,'share',exportedAt)};
+ }});
+};
 $('#exportForm').onsubmit=async e=>{
   e.preventDefault();if(exportBusy)return;
   const d=drafts.find(d=>d.id===exportTarget);if(!d)return;const mode=new FormData(e.target).get('mode'),snapshot=structuredClone(d),exportedAt=new Date().toISOString();
-  exportBusy=true;$('#downloadExport').disabled=true;$('#cancelExport').disabled=true;
+  exportBusy=true;$('#sendStudio').disabled=true;$('#downloadExport').disabled=true;$('#cancelExport').disabled=true;
   $('#exportForm').querySelectorAll('input').forEach(input=>input.disabled=true);
   $('#exportStatus').textContent='Preparing report and photos…';
   try{
@@ -120,7 +130,7 @@ $('#exportForm').onsubmit=async e=>{
     const url=URL.createObjectURL(zip),a=document.createElement('a');a.href=url;a.download=exportFilename(snapshot,mode,exportedAt);document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
     $('#exportDialog').close();tutorial.event('export-requested',{inspectionId:d.id,mode});toast(mode==='recovery'?`${formatSize(zip.size)} recovery ZIP requested. Check RECOVERY-NOTES.txt for missing files.`:`${formatSize(zip.size)} ZIP download requested. No cloud upload made.`);
   }catch(e){$('#exportStatus').textContent=e.message+' Your local records have not been changed.';error(e);}
-  finally{exportBusy=false;$('#downloadExport').disabled=false;$('#cancelExport').disabled=false;$('#exportForm').querySelectorAll('input').forEach(input=>input.disabled=false);}
+  finally{exportBusy=false;$('#sendStudio').disabled=false;$('#downloadExport').disabled=false;$('#cancelExport').disabled=false;$('#exportForm').querySelectorAll('input').forEach(input=>input.disabled=false);}
 };
 function openDelete(target){
   deleteTarget=target;const all=target==='all',records=all?drafts:drafts.filter(d=>d.id===target),photos=records.flatMap(draftPhotos);

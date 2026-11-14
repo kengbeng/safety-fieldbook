@@ -117,3 +117,20 @@ New findings inherit building, floor and room. Review checkboxes/workflow and re
 ## Lightweight finding entry (v2.7)
 
 Finding entry now asks only for description and optional building/floor/room, with photo and audio attachments. Hazard category and priority controls, summary badges and priority filtering are removed. Existing category/priority data is retained in local records and exports; new entries do not receive invented defaults.
+
+### Direct transfer feature branch
+
+Within an inspection, choose **Export ZIP for Report Studio → Send to Report
+Studio**. Scan the receiver QR, compare the verification code on both devices,
+confirm both, then send the existing default Compact ZIP. Report Studio must
+accept, verify, import and save before the phone reports success. The original
+inspection remains on the phone. Existing ZIP downloads work without signalling.
+
+This feature branch now uses the deployed staging `signallingUrl` in
+`transfer-config.json`. Cloudflare
+Workers + Durable Objects deployment configuration and instructions are in the
+Report Studio companion branch at `signalling/README.md`. That branch also
+contains a Node reference server and a two-app browser test harness. The staging backend has been deployed with user authorisation; production
+applications remain unchanged.
+
+Staging signalling deployed with user authorisation on 14 November 2026: https://safety-fieldbook-signalling-staging.kengbeng.workers.dev. This feature branch points to staging; production apps are unchanged. STUN is enabled; TURN credentials and physical-device acceptance are still pending.
