@@ -210,6 +210,7 @@ export async function openTransfer(options) {
       $('[data-qr]').append(instructions,expiry,regenerate,details);
       const updateExpiry = () => {const seconds = Math.max(0,Math.ceil((transfer.expires-Date.now())/1000)); expiry.textContent = `QR expires in ${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,'0')}.`;};
       updateExpiry(); countdown = setInterval(updateExpiry,1000);
+      $('[data-stage]').textContent = 'Scan this QR from your phone';
       setStatus('In Safety Fieldbook, choose Send to Report Studio to open the phone camera.');
 
     } else {
@@ -223,6 +224,7 @@ export async function openTransfer(options) {
       transfer.onready = async () => {
         if (sendingStarted || stopped) return;
         sendingStarted = true;
+        $('[data-stage]').textContent = 'Preparing inspection';
         progressState('Preparing Compact ZIP',true);
         try {
           setStatus('Receiver confirmed. Preparing the inspection and photographs…');
